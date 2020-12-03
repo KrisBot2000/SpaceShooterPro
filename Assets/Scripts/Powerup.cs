@@ -10,7 +10,7 @@ public class Powerup : MonoBehaviour
     private float _powerupSpeed = 3.0f;
 
     
-    [SerializeField] // 0 = tripleshot, 1 = speed, 2 = shield
+    [SerializeField] // 0 = tripleshot, 1 = speed, 2 = shield, 3 = health
     private int powerupID;
 
     [SerializeField]
@@ -26,11 +26,9 @@ public class Powerup : MonoBehaviour
     void Update()
     {
         //move down at speed of 3
-
         transform.Translate(Vector3.down * _powerupSpeed * Time.deltaTime);
 
         //when we leave the screen, destroy this object
-
         if (transform.position.y < -4.5f)
         {
             Destroy(this.gameObject);
@@ -58,12 +56,16 @@ public class Powerup : MonoBehaviour
                         player.TripleShotActive();
                         break;
                     case 1:
-                        Debug.Log("speed boost collected");
+                        //Debug.Log("speed boost collected");
                         player.SpeedBoostActive();
                         break;
                     case 2:
-                        Debug.Log("shield collected");
+                        //Debug.Log("shield collected");
                         player.ShieldsActive();
+                        break;
+                    case 3:
+                        //Debug.Log("health collected");
+                        player.ReverseDamage();
                         break;
                     default:
                         Debug.Log("default case");

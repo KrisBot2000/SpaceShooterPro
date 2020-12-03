@@ -11,6 +11,12 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float _speedMultiplier = 2f;
 
+    [SerializeField]
+    private float _thrusterMultiplier = 1.05f;
+
+    [SerializeField]
+    private float _speedGovernor = 25.0f;
+
 
     [SerializeField]
     private GameObject _laserPrefab = null;
@@ -95,9 +101,9 @@ public class Player : MonoBehaviour
     void Update()
     {
 
-
-
         CalculateMovement();
+
+        Thrusters();
 
         //if I hit the space key
         //spawn gameObject
@@ -107,6 +113,7 @@ public class Player : MonoBehaviour
             FireLaser();
         }
     }
+
 
     void CalculateMovement()
     {
@@ -197,23 +204,14 @@ public class Player : MonoBehaviour
         //subtract 1 life
         _lives--;
 
-        //if lives is 2, enable right engine
-        if(_lives == 2)
-        {
-            _leftEngine.SetActive(true);
-        }
-        //else if lives is 1, enable left engine
-        else if(_lives == 1)
-        {
-            _rightEngine.SetActive(true);
-        }
+        //update player animations
+        UpdatePlayerAnimations();
 
         //upate lives
         _uiManager.UpdateLives(_lives);
 
         //check if dead
         //destroy us
-
         if (_lives < 1)
         {
             //communicate with spawn manager
@@ -271,5 +269,68 @@ public class Player : MonoBehaviour
     {
         _score += points;
         _uiManager.UpdateScore(_score);
+    }
+
+    
+    public void ReverseDamage()
+    {
+        if (_lives < 3)
+        {
+            //add 1 life
+            _lives++;
+
+            //update #lives on screen
+            _uiManager.UpdateLives(_lives);
+
+            //update player animations
+            UpdatePlayerAnimations();
+
+
+        }
+    }
+
+    public void UpdatePlayerAnimations()
+    {
+        switch (_lives)
+        {
+            case 3:
+                _leftEngine.SetActive(false);
+                _rightEngine.SetActive(false);
+                break;
+            case 2:
+                _leftEngine.SetActive(true);
+                _rightEngine.SetActive(false);
+                break;
+            case 1:
+                _leftEngine.SetActive(true);
+                _rightEngine.SetActive(true);
+                break;
+            default:
+                Debug.Log("Player: UpdatePlayerAnimations default case.");
+                break;
+        }
+    }
+    
+
+    void Thrusters()
+    {
+        //if LeftShift is pressed
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            //increases speed exponentially
+            _speed *= _thrusterMultiplier;
+
+            //limits speed to speed governor
+            if (_speed > _speedGovernor)
+            {
+                _speed = _speedGovernor;
+            }
+        }
+        //if LeftShift is de-pressed
+        else if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            //resets speed
+            _speed = 3.5f;
+        }
     }
 }
