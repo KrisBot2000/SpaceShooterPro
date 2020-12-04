@@ -10,7 +10,7 @@ public class Powerup : MonoBehaviour
     private float _powerupSpeed = 3.0f;
 
     
-    [SerializeField] // 0 = tripleshot, 1 = speed, 2 = shield, 3 = health
+    [SerializeField] // 0 = tripleshot, 1 = speed, 2 = shield, 3 = health, 4 = ammo
     private int powerupID;
 
     [SerializeField]
@@ -66,6 +66,9 @@ public class Powerup : MonoBehaviour
                     case 3:
                         //Debug.Log("health collected");
                         player.ReverseDamage();
+                        break;
+                    case 4:
+                        Debug.Log("ammo collected");
                         break;
                     default:
                         Debug.Log("default case");
