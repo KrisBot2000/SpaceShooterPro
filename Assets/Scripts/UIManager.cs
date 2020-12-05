@@ -16,6 +16,9 @@ public class UIManager : MonoBehaviour
     private Sprite[] _liveSprites;
 
     [SerializeField]
+    private Text _ammoCountText;
+
+    [SerializeField]
     private Text _gameOverText;
 
     [SerializeField]
@@ -37,6 +40,8 @@ public class UIManager : MonoBehaviour
         _scoreText.text = "Score: " + 0;
 
         _gameOverText.gameObject.SetActive(false);
+
+        _ammoCountText.text = "Ammo: " + 15;
 
         //assign handle to component
         _gameManager = GameObject.Find("Game_Manager").GetComponent<GameManager>();
@@ -65,6 +70,11 @@ public class UIManager : MonoBehaviour
         {
             GameOverSequence();
         }
+    }
+
+    public void UpdateAmmoCount(int playerAmmoCount)
+    {
+        _ammoCountText.text = "Ammo: " + playerAmmoCount.ToString();
     }
 
     void GameOverSequence()

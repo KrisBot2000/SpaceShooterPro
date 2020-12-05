@@ -25,6 +25,10 @@ public class Player : MonoBehaviour
     private GameObject _tripleShotPrefab = null;
 
     [SerializeField]
+    private int _ammoCount = 15;
+
+
+    [SerializeField]
     private float _fireRate = 0.5f;
 
     private float _canFire = -1f;
@@ -108,9 +112,13 @@ public class Player : MonoBehaviour
         //if I hit the space key
         //spawn gameObject
 
-        if (Input.GetKeyDown(KeyCode.Space) && Time.time > _canFire)
+        if (Input.GetKeyDown(KeyCode.Space) && Time.time > _canFire && _ammoCount > 0)
         {
             FireLaser();
+            _ammoCount--;
+            _uiManager.UpdateAmmoCount(_ammoCount);
+
+            
         }
     }
 
@@ -184,8 +192,13 @@ public class Player : MonoBehaviour
             //Debug.Log("Space Key Pressed");
             Instantiate(_laserPrefab, transform.position + new Vector3(0, 1.05f, 0), Quaternion.identity);
         }
-
         _audioSource.Play();
+    }
+
+    public void AddAmmo()
+    {
+        _ammoCount += 15;
+        _uiManager.UpdateAmmoCount(_ammoCount);
     }
 
     public void Damage()
