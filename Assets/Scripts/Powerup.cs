@@ -68,7 +68,7 @@ public class Powerup : MonoBehaviour
                         player.ReverseDamage();
                         break;
                     case 4:
-                        Debug.Log("ammo collected");
+                        //Debug.Log("ammo collected");
                         player.AddAmmo();
                         break;
                     default:

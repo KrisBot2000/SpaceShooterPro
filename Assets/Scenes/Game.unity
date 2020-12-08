@@ -204,12 +204,15 @@ MonoBehaviour:
   _tripleShotPrefab: {fileID: 8744427874227739935, guid: 636b02cbd3ef446f4b76a9ba047da401,
     type: 3}
   _ammoCount: 15
+  _ammoCountMax: 15
   _fireRate: 0.15
   _lives: 3
+  _maxLives: 3
   _isTripleShotActive: 0
   _isSpeedBoostActive: 0
   _isShieldsActive: 0
   _shieldsVisualizer: {fileID: 82084247}
+  _shieldStrenth: 0
   _leftEngine: {fileID: 1340453581}
   _rightEngine: {fileID: 882992502}
   _score: 0
@@ -1993,6 +1996,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5803214813543152861, guid: 52b478212f5284717be15e4edcf496ed,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5803214813543152861, guid: 52b478212f5284717be15e4edcf496ed,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5803214813543152861, guid: 52b478212f5284717be15e4edcf496ed,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5803214813543152863, guid: 52b478212f5284717be15e4edcf496ed,
         type: 3}

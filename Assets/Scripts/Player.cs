@@ -27,6 +27,9 @@ public class Player : MonoBehaviour
     [SerializeField]
     private int _ammoCount = 15;
 
+    [SerializeField]
+    private int _ammoCountMax = 15;
+
 
     [SerializeField]
     private float _fireRate = 0.5f;
@@ -35,6 +38,9 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     private int _lives = 3;
+
+    [SerializeField]
+    private int _maxLives = 3;
 
 
     private SpawnManager _spawnManager = null;
@@ -52,10 +58,15 @@ public class Player : MonoBehaviour
     private GameObject _shieldsVisualizer;
 
     [SerializeField]
-    private GameObject _leftEngine, _rightEngine;
+    private int _shieldStrenth = 0;
+
+    private SpriteRenderer _shieldSpriteRenderer = null;
 
     [SerializeField]
-    private int _score;
+    private GameObject _leftEngine = null, _rightEngine = null;
+
+    [SerializeField]
+    private int _score = 0;
 
     [SerializeField]
     private UIManager _uiManager;
@@ -79,6 +90,7 @@ public class Player : MonoBehaviour
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
 
         _audioSource = GetComponent<AudioSource>();
+        
 
         if (_spawnManager == null)
         {
@@ -109,20 +121,12 @@ public class Player : MonoBehaviour
 
         Thrusters();
 
-        //if I hit the space key
-        //spawn gameObject
+        SpaceBarListener();
 
-        if (Input.GetKeyDown(KeyCode.Space) && Time.time > _canFire && _ammoCount > 0)
-        {
-            FireLaser();
-            _ammoCount--;
-            _uiManager.UpdateAmmoCount(_ammoCount);
-
-            
-        }
+        
     }
 
-
+//MOVEMENT
     void CalculateMovement()
     {
         float horizontalInput = Input.GetAxis("Horizontal");
@@ -177,6 +181,58 @@ public class Player : MonoBehaviour
         }
     }
 
+//SPEED BOOST
+    public void SpeedBoostActive()
+    {
+        _isSpeedBoostActive = true;
+        _speed *= _speedMultiplier;
+        StartCoroutine(SpeedBoostPowerDownRoutine());
+    }
+
+    IEnumerator SpeedBoostPowerDownRoutine()
+    {
+        yield return new WaitForSeconds(5.0f);
+        _isSpeedBoostActive = false;
+        _speed /= _speedMultiplier;
+    }
+
+//THRUSTERS
+    void Thrusters()
+    {
+        //if LeftShift is pressed
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            //increases speed exponentially
+            _speed *= _thrusterMultiplier;
+
+            //limits speed to speed governor
+            if (_speed > _speedGovernor)
+            {
+                _speed = _speedGovernor;
+            }
+        }
+        //if LeftShift is de-pressed
+        else if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            //resets speed
+            _speed = 3.5f;
+        }
+    }
+
+
+//LASERS
+    void SpaceBarListener()
+    {
+        if (Input.GetKeyDown(KeyCode.Space) && Time.time > _canFire && _ammoCount > 0)
+        {
+            FireLaser();
+            _ammoCount--;
+            _uiManager.UpdateAmmoCount(_ammoCount);
+        }
+    }
+
+
+
     void FireLaser()
     {
         _canFire = Time.time + _fireRate;
@@ -195,25 +251,53 @@ public class Player : MonoBehaviour
         _audioSource.Play();
     }
 
-    public void AddAmmo()
+//TRIPLE SHOT    
+    public void TripleShotActive()
     {
-        _ammoCount += 15;
-        _uiManager.UpdateAmmoCount(_ammoCount);
+        //tripleShotActive becomes true
+        _isTripleShotActive = true;
+        //start the power-down coroutine for triple shot
+        StartCoroutine(TripleShotPowerDownRoutine());
     }
 
+    IEnumerator TripleShotPowerDownRoutine()
+    {
+        yield return new WaitForSeconds(5.0f);
+        _isTripleShotActive = false;
+    }
+
+//DAMAGE
     public void Damage()
     {
 
         //if shields is active
         if (_isShieldsActive == true)
         {
-            //deactivate shields
-            _isShieldsActive = false;
-            _shieldsVisualizer.SetActive(false);
-            return;
 
+            _shieldStrenth--;
+            //Debug.Log("SHIELD STRENGTH: " + _shieldStrenth);
+
+            if(_shieldStrenth == 2)
+            {
+                _shieldSpriteRenderer.color = new Color(0f, 1f, 0.3598187f, 1f);
+                //Debug.Log(_shieldSpriteRenderer.color);
+                
+            }
+            else if(_shieldStrenth == 1)
+            {
+                _shieldSpriteRenderer.color = new Color(1f, 0f, 0.7858334f, 1f);
+                //Debug.Log(_shieldSpriteRenderer.color);
+
+            }
+            else if (_shieldStrenth == 0)
+            {
+                //deactivate shields
+                _isShieldsActive = false;
+                _shieldsVisualizer.SetActive(false);
+            }
+            return;
         }
-        
+        //Debug.Log("HIT");
         //subtract 1 life
         _lives--;
 
@@ -234,60 +318,12 @@ public class Player : MonoBehaviour
 
             Destroy(this.gameObject);
         }
-        
     }
 
-    //create method to modify triple shot:
-    public void TripleShotActive()
-    {
-        //tripleShotActive becomes true
-        _isTripleShotActive = true;
-        //start the power-down coroutine for triple shot
-        StartCoroutine(TripleShotPowerDownRoutine());
-    }
-
-    //IEnumerator TripleShotPowerDownRoutine
-    //wait 5 seconds
-    //set the triple shot to false
-    IEnumerator TripleShotPowerDownRoutine()
-    {
-        yield return new WaitForSeconds(5.0f);
-        _isTripleShotActive = false;
-    }
-
-    public void SpeedBoostActive()
-    {
-        _isSpeedBoostActive = true;
-        _speed *= _speedMultiplier;
-        StartCoroutine(SpeedBoostPowerDownRoutine());
-    }
-
-    IEnumerator SpeedBoostPowerDownRoutine()
-    {
-        yield return new WaitForSeconds(5.0f);
-        _isSpeedBoostActive = false;
-        _speed /= _speedMultiplier;
-    }
-
-    public void ShieldsActive()
-    {
-        _isShieldsActive = true;
-        _shieldsVisualizer.SetActive(true);
-    }
-
-    //method to add 10 to score
-    //communicate with UI to update score
-
-    public void AddScore(int points)
-    {
-        _score += points;
-        _uiManager.UpdateScore(_score);
-    }
-
-    
+//REVERSE DAMAGE
     public void ReverseDamage()
     {
-        if (_lives < 3)
+        if (_lives < _maxLives)
         {
             //add 1 life
             _lives++;
@@ -297,11 +333,50 @@ public class Player : MonoBehaviour
 
             //update player animations
             UpdatePlayerAnimations();
-
-
         }
     }
 
+//SHIELDS
+    public void ShieldsActive()
+    {
+        _isShieldsActive = true;
+        _shieldStrenth = 3;
+        //Debug.Log("SHIELD STRENGTH: " + _shieldStrenth);
+        _shieldsVisualizer.SetActive(true);
+
+        _shieldSpriteRenderer = GameObject.Find("Shields").GetComponent<SpriteRenderer>();
+        
+
+        _shieldSpriteRenderer.color = new Color(0f, 0.662715f, 1f, 1f);
+        
+    }
+
+
+//AMMO
+    public void AddAmmo()
+    {
+        //add amo
+        _ammoCount += 15;
+
+        //restrain to Max
+        if (_ammoCount > _ammoCountMax)
+        {
+            _ammoCount = _ammoCountMax;
+        }
+
+        //update UI
+        _uiManager.UpdateAmmoCount(_ammoCount);
+    } 
+    
+//SCORE
+    public void AddScore(int points)
+    {
+        _score += points;
+        _uiManager.UpdateScore(_score);
+    }
+
+  
+//ANIMATIONS
     public void UpdatePlayerAnimations()
     {
         switch (_lives)
@@ -321,29 +396,6 @@ public class Player : MonoBehaviour
             default:
                 Debug.Log("Player: UpdatePlayerAnimations default case.");
                 break;
-        }
-    }
-    
-
-    void Thrusters()
-    {
-        //if LeftShift is pressed
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            //increases speed exponentially
-            _speed *= _thrusterMultiplier;
-
-            //limits speed to speed governor
-            if (_speed > _speedGovernor)
-            {
-                _speed = _speedGovernor;
-            }
-        }
-        //if LeftShift is de-pressed
-        else if (Input.GetKeyUp(KeyCode.LeftShift))
-        {
-            //resets speed
-            _speed = 3.5f;
         }
     }
 }
