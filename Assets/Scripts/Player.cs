@@ -77,6 +77,8 @@ public class Player : MonoBehaviour
 
     private AudioSource _audioSource;
 
+    private CameraShake _cameraShake;
+
 
 
 
@@ -89,17 +91,26 @@ public class Player : MonoBehaviour
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
 
+        _cameraShake = GameObject.Find("CameraManager").GetComponent<CameraShake>();
+
         _audioSource = GetComponent<AudioSource>();
+
+
         
 
         if (_spawnManager == null)
         {
-            Debug.LogError("The Spawn Manager is NULL.");
+            Debug.LogError("The Spawn Manager on Player is NULL.");
         }
 
         if (_uiManager == null)
         {
-            Debug.LogError("The UI Manager is NULL.");
+            Debug.LogError("The UI Manager on Player is NULL.");
+        }
+
+        if (_cameraShake == null)
+        {
+            Debug.LogError("Camera Shake on Player is NULL.");
         }
 
         if(_audioSource == null)
@@ -269,6 +280,8 @@ public class Player : MonoBehaviour
 //DAMAGE
     public void Damage()
     {
+
+        _cameraShake.CamShake();
 
         //if shields is active
         if (_isShieldsActive == true)
