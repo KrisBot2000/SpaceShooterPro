@@ -11,21 +11,27 @@ public class SpawnManager : MonoBehaviour
     private GameObject _enemyContainer = null;
 
     [SerializeField]
-    private bool _stopSpawning = false;
+    private bool _stopSpawning = true;
 
     [SerializeField]
     private GameObject[] _powerups;
 
+    [SerializeField]
+    private GameObject[] _rarePowerups;
+
+    //private WaveManager _waveManager = null;
+
+   
+
     // Start is called before the first frame update
     void Start()
     {
-        
-    }
+        //_waveManager = GameObject.Find("Wave_Manager").GetComponent<WaveManager>();
 
-    public void StartSpawning()
-    {
-        StartCoroutine(SpawnEnemyRoutine());
-        StartCoroutine(SpawnTripleShotPowerupRoutine());
+        //if(_waveManager == null)
+        //{
+        //    Debug.LogError("Wave Manager is NULL in Spawn Manager Script.");
+        //}
     }
 
     // Update is called once per frame
@@ -34,51 +40,72 @@ public class SpawnManager : MonoBehaviour
         
     }
 
-    //spawn game objects every 5 sec
-    //create a coroutine of IEnumerator -- Yeild events
-    //while loop
+    public void StartSpawning()
+    {
+        Debug.Log("started spawning");
+        _stopSpawning = false;
+        StartCoroutine(SpawnEnemyRoutine());
+        StartCoroutine(SpawnPowerupRoutine());
+        StartCoroutine(SpawnRarePowerupRoutine());
+    }
 
     IEnumerator SpawnEnemyRoutine()
     {
         //wait 1 frame
         yield return null;
 
-        //then this line is called
-
         yield return new WaitForSeconds(3.0f);
-
-
-        //then this line is called
-        //while loop (infinite loop)
-            //Instantiate enemy prefab
-            //yeild wait for 5 sec
 
         while (_stopSpawning == false)
         {
             Vector3 posToSpawn = new Vector3(Random.Range(-8f, 8f), 7, 0);
             GameObject newEnemy = Instantiate(_enemyPrefab, posToSpawn, Quaternion.identity);
+
+            //update enemy count in wave manager
+            //_waveManager.enemyKillCount++;
+
             newEnemy.transform.parent = _enemyContainer.transform;
             yield return new WaitForSeconds(5.0f);
         }
     }
 
-    IEnumerator SpawnTripleShotPowerupRoutine()
+    IEnumerator SpawnPowerupRoutine()
     {
         yield return new WaitForSeconds(3.0f);
 
+        
         while (_stopSpawning == false)
         {
             //every 3 - 7 sec, spawn in a powerup
             Vector3 posToSpawn = new Vector3(Random.Range(-8f, 8f), 7, 0);
-            int randomPowerUp = Random.Range(0, 5);
-            //Debug.Log(randomPowerUp);
-            Instantiate(_powerups[randomPowerUp], posToSpawn, Quaternion.identity);
+            int randomPowerup = Random.Range(0, _powerups.Length);
+
+            //Debug.Log("Random powerup: " + randomPowerup);
+            
+            Instantiate(_powerups[randomPowerup], posToSpawn, Quaternion.identity);
+            
             yield return new WaitForSeconds(Random.Range(3.0f, 8.0f));
-        }   
+        }
+
 
     }
 
-    public void OnPlayerDeath()
+    IEnumerator SpawnRarePowerupRoutine()
+    {
+        yield return new WaitForSeconds(3.0f);
+        
+            while (_stopSpawning == false)
+        {
+            Vector3 posToSpawn = new Vector3(Random.Range(-8f, 8f), 7, 0);
+            int randomRarePowerup = Random.Range(0, _rarePowerups.Length);
+            Instantiate(_rarePowerups[randomRarePowerup], posToSpawn, Quaternion.identity);
+            yield return new WaitForSeconds(Random.Range(3.0f, 8.0f));
+        }
+
+        
+    }
+
+    public void StopSpawning()
     {
         _stopSpawning = true;
     }

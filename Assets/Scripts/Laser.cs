@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Laser : MonoBehaviour
 {
-    //speed variable of 8
+    
 
     [SerializeField]
     private float _laserSpeed = 8.0f;
@@ -48,8 +48,6 @@ public class Laser : MonoBehaviour
             if (transform.parent != null)
             {
                 Destroy(transform.parent.gameObject);
-
-
             }
 
             Destroy(this.gameObject);
@@ -72,10 +70,7 @@ public class Laser : MonoBehaviour
             if (transform.parent != null)
             {
                 Destroy(transform.parent.gameObject);
-
-
             }
-
             Destroy(this.gameObject);
         }
     }

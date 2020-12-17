@@ -10,14 +10,20 @@ public class Asteroid : MonoBehaviour
     [SerializeField]
     private GameObject _explosionPrefab = null;
 
-    private SpawnManager _spawnManager;
+    private WaveManager _waveManager;
 
 
 
     private void Start()
     {
-        _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
+        _waveManager = GameObject.Find("Wave_Manager").GetComponent<WaveManager>();
+
+        if(_waveManager == null)
+        {
+            Debug.LogError("Wave Manager is NULL in Asteroid script.");
+        }
     }
+    
 
 
     // Update is called once per frame
@@ -37,17 +43,10 @@ public class Asteroid : MonoBehaviour
     {
         if(other.tag == "Laser")
         {
-
             Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
             Destroy(other.gameObject);
-            _spawnManager.StartSpawning();
+            _waveManager.InitializeWaveSequence();
             Destroy(this.gameObject, 0.25f);
         }
-
     }
-
-
-
-
-
 }

@@ -25,10 +25,13 @@ public class Player : MonoBehaviour
     private GameObject _tripleShotPrefab = null;
 
     [SerializeField]
+    private GameObject _homingMisslePrefab = null;
+
+    [SerializeField]
     private int _ammoCount = 15;
 
     [SerializeField]
-    private int _ammoCountMax = 15;
+    public int ammoCountMax = 15;
 
 
     [SerializeField]
@@ -49,13 +52,16 @@ public class Player : MonoBehaviour
     private bool _isTripleShotActive = false;
 
     [SerializeField]
+    private bool _isHomingMissleActive = false;
+
+    [SerializeField]
     private bool _isSpeedBoostActive = false;
 
     [SerializeField]
     private bool _isShieldsActive = false;
 
     [SerializeField]
-    private GameObject _shieldsVisualizer;
+    private GameObject _shieldsVisualizer = null;
 
     [SerializeField]
     private int _shieldStrenth = 0;
@@ -69,15 +75,18 @@ public class Player : MonoBehaviour
     private int _score = 0;
 
     [SerializeField]
-    private UIManager _uiManager;
+    private UIManager _uiManager = null;
 
     //variable to store audio clip
     [SerializeField]
-    private AudioClip _laserSoundClip;
+    private AudioClip _laserSoundClip = null;
 
-    private AudioSource _audioSource;
+    private AudioSource _audioSource = null;
 
-    private CameraShake _cameraShake;
+    private CameraShake _cameraShake = null;
+
+    [SerializeField]
+    private GameObject _explosionPrefab = null;
 
 
 
@@ -121,6 +130,8 @@ public class Player : MonoBehaviour
         {
             _audioSource.clip = _laserSoundClip;
         }
+
+        
 
     }
 
@@ -248,12 +259,18 @@ public class Player : MonoBehaviour
     {
         _canFire = Time.time + _fireRate;
 
-        if (_isTripleShotActive == true)
+
+        if (_isHomingMissleActive == true)
+        {
+            Instantiate(_homingMisslePrefab, transform.position, Quaternion.identity);
+        }
+
+        else if (_isTripleShotActive == true)
         {
             //call instantiate for triple shot
             Instantiate(_tripleShotPrefab, transform.position, Quaternion.identity);
         }
-
+        
         else
         {
             //Debug.Log("Space Key Pressed");
@@ -275,6 +292,20 @@ public class Player : MonoBehaviour
     {
         yield return new WaitForSeconds(5.0f);
         _isTripleShotActive = false;
+    }
+
+//HOMING MISSLE
+    public void HomingMissleActive()
+    {
+        _isHomingMissleActive = true;
+        StartCoroutine(HomingMisslePowerDownRoutine());
+
+    }
+
+    IEnumerator HomingMisslePowerDownRoutine()
+    {
+        yield return new WaitForSeconds(5.0f);
+        _isHomingMissleActive = false;
     }
 
 //DAMAGE
@@ -327,9 +358,11 @@ public class Player : MonoBehaviour
             //communicate with spawn manager
             //let them know to stop spawning
 
-            _spawnManager.OnPlayerDeath();
+            _spawnManager.StopSpawning();
 
-            Destroy(this.gameObject);
+            Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
+            
+            Destroy(this.gameObject, 0.25f);
         }
     }
 
@@ -372,15 +405,15 @@ public class Player : MonoBehaviour
         _ammoCount += 15;
 
         //restrain to Max
-        if (_ammoCount > _ammoCountMax)
+        if (_ammoCount > ammoCountMax)
         {
-            _ammoCount = _ammoCountMax;
+            _ammoCount = ammoCountMax;
         }
 
         //update UI
         _uiManager.UpdateAmmoCount(_ammoCount);
-    } 
-    
+    }
+
 //SCORE
     public void AddScore(int points)
     {

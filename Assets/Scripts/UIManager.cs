@@ -7,26 +7,34 @@ public class UIManager : MonoBehaviour
 {
     //create handle to Text
     [SerializeField]
-    private Text _scoreText;
+    private Text _scoreText = null;
 
     [SerializeField]
-    private Image _LivesImg;
+    private Image _LivesImg = null;
 
     [SerializeField]
-    private Sprite[] _liveSprites;
+    private Sprite[] _liveSprites = null;
 
     [SerializeField]
-    private Text _ammoCountText;
+    private Text _ammoCountText = null;
 
     [SerializeField]
-    private Text _gameOverText;
+    private Text _ammoMaxText = null;
 
     [SerializeField]
-    private Text _restartText;
+    private Text _gameOverText = null;
+
+    [SerializeField]
+    private Text _restartText = null;
 
     //assign handle to Game Manager
     [SerializeField]
     private GameManager _gameManager;
+
+    [SerializeField]
+    private Player _player;
+
+    
 
 
 
@@ -41,7 +49,7 @@ public class UIManager : MonoBehaviour
 
         _gameOverText.gameObject.SetActive(false);
 
-        _ammoCountText.text = "Ammo: " + 15;
+        _ammoCountText.text = "Ammo: " + 0;
 
         //assign handle to component
         _gameManager = GameObject.Find("Game_Manager").GetComponent<GameManager>();
@@ -50,6 +58,17 @@ public class UIManager : MonoBehaviour
         if (_gameManager == null)
         {
             Debug.LogError("GameManager is NULL.");
+        }
+
+        _player = GameObject.Find("Player").GetComponent<Player>();
+
+        if (_player == null)
+        {
+            Debug.LogError("Player is NULL in UI Manager.");
+        }
+        else
+        {
+            _ammoMaxText.text = "/" + _player.ammoCountMax.ToString();
         }
 
 
@@ -62,14 +81,14 @@ public class UIManager : MonoBehaviour
 
     public void UpdateLives(int currentLives)
     {
-        //dispay img sprite
-        //give it a new one based on the currentLives index
-        _LivesImg.sprite = _liveSprites[currentLives];
-
-        if (currentLives == 0)
+        if (currentLives <= 0)
         {
             GameOverSequence();
         }
+        else
+        {
+            _LivesImg.sprite = _liveSprites[currentLives];
+        }  
     }
 
     public void UpdateAmmoCount(int playerAmmoCount)
