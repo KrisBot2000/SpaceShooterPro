@@ -11,7 +11,7 @@ public class SpawnManager : MonoBehaviour
     private GameObject _enemyContainer = null;
 
     [SerializeField]
-    private bool _stopSpawning = true;
+    private bool _spawning = false;
 
     [SerializeField]
     private GameObject[] _powerups;
@@ -19,19 +19,19 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private GameObject[] _rarePowerups;
 
-    //private WaveManager _waveManager = null;
+    private WaveManager _waveManager = null;
 
    
 
     // Start is called before the first frame update
     void Start()
     {
-        //_waveManager = GameObject.Find("Wave_Manager").GetComponent<WaveManager>();
+        _waveManager = GameObject.Find("Wave_Manager").GetComponent<WaveManager>();
 
-        //if(_waveManager == null)
-        //{
-        //    Debug.LogError("Wave Manager is NULL in Spawn Manager Script.");
-        //}
+        if (_waveManager == null)
+        {
+            Debug.LogError("Wave Manager is NULL in Spawn Manager Script.");
+        }
     }
 
     // Update is called once per frame
@@ -40,10 +40,10 @@ public class SpawnManager : MonoBehaviour
         
     }
 
-    public void StartSpawning()
+    public void InitializeSpawning()
     {
         Debug.Log("started spawning");
-        _stopSpawning = false;
+        _spawning = true;
         StartCoroutine(SpawnEnemyRoutine());
         StartCoroutine(SpawnPowerupRoutine());
         StartCoroutine(SpawnRarePowerupRoutine());
@@ -56,13 +56,13 @@ public class SpawnManager : MonoBehaviour
 
         yield return new WaitForSeconds(3.0f);
 
-        while (_stopSpawning == false)
+        while (_spawning)
         {
             Vector3 posToSpawn = new Vector3(Random.Range(-8f, 8f), 7, 0);
             GameObject newEnemy = Instantiate(_enemyPrefab, posToSpawn, Quaternion.identity);
 
             //update enemy count in wave manager
-            //_waveManager.enemyKillCount++;
+            _waveManager.enemyCount++;
 
             newEnemy.transform.parent = _enemyContainer.transform;
             yield return new WaitForSeconds(5.0f);
@@ -74,7 +74,7 @@ public class SpawnManager : MonoBehaviour
         yield return new WaitForSeconds(3.0f);
 
         
-        while (_stopSpawning == false)
+        while (_spawning)
         {
             //every 3 - 7 sec, spawn in a powerup
             Vector3 posToSpawn = new Vector3(Random.Range(-8f, 8f), 7, 0);
@@ -94,19 +94,22 @@ public class SpawnManager : MonoBehaviour
     {
         yield return new WaitForSeconds(3.0f);
         
-            while (_stopSpawning == false)
+            while (_spawning)
         {
             Vector3 posToSpawn = new Vector3(Random.Range(-8f, 8f), 7, 0);
             int randomRarePowerup = Random.Range(0, _rarePowerups.Length);
             Instantiate(_rarePowerups[randomRarePowerup], posToSpawn, Quaternion.identity);
             yield return new WaitForSeconds(Random.Range(3.0f, 8.0f));
-        }
+        } 
+    }
 
-        
+    public void StartSpawning()
+    {
+        _spawning = true;
     }
 
     public void StopSpawning()
     {
-        _stopSpawning = true;
+        _spawning = false;
     }
 }

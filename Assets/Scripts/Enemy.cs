@@ -70,7 +70,7 @@ public class Enemy : MonoBehaviour
             _fireRate = Random.Range(3f, 7f);
             _canFire = Time.time + _fireRate;
 
-            //if enemy Collider2D exists
+            //if enemy's Collider2D exists (not yet killed by player)
             if (GetComponent<Collider2D>() != null)
             {
                 GameObject enemyLaser = Instantiate(_laserPrefab, transform.position, Quaternion.identity);
@@ -79,7 +79,7 @@ public class Enemy : MonoBehaviour
 
                 for (int i = 0; i < lasers.Length; i++)
                 {
-                    lasers[i].AssignEnemyLaser();
+                    lasers[i].tag = "EnemyLaser";
                 }
             }
         }
@@ -130,7 +130,7 @@ public class Enemy : MonoBehaviour
             Destroy(GetComponent<Collider2D>());
 
             //update enemy kill counter
-            _waveManager.enemyKillCount++;
+            //_waveManager.enemyKillCount++;
 
             //destroy player
             Destroy(this.gameObject, 2.8f);
@@ -140,7 +140,7 @@ public class Enemy : MonoBehaviour
         //destroy laser
         //destroy us
 
-        if (other.tag == "Laser" || other.tag == "HomingMissile")
+        if (other.tag == "PlayerLaser" || other.tag == "HomingMissile")
         {
             //destroy laser or homing missile
             Destroy(other.gameObject);
@@ -165,7 +165,7 @@ public class Enemy : MonoBehaviour
             _audioSource.Play();
 
             //update enemy kill counter
-            _waveManager.enemyKillCount++;
+            //_waveManager.enemyKillCount++;
 
             //destroy enemy
             Destroy(this.gameObject, 2.8f);

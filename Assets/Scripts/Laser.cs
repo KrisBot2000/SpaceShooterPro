@@ -9,7 +9,7 @@ public class Laser : MonoBehaviour
     [SerializeField]
     private float _laserSpeed = 8.0f;
 
-    private bool _isEnemyLaser = false;
+    //public bool isEnemyLaser = false;
 
     // Start is called before the first frame update
     void Start()
@@ -21,11 +21,11 @@ public class Laser : MonoBehaviour
     void Update()
     {
        
-        if(_isEnemyLaser == false)
+        if(this.tag == "PlayerLaser")
         {
             MoveUp();
         }
-        else
+        if (this.tag == "EnemyLaser")
         {
             MoveDown();
         }
@@ -75,14 +75,14 @@ public class Laser : MonoBehaviour
         }
     }
 
-    public void AssignEnemyLaser()
-    {
-        _isEnemyLaser = true;
-    }
+    //public void AssignEnemyLaser()
+    //{
+    //    isEnemyLaser = true;
+    //}
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.tag == "Player" && _isEnemyLaser == true)
+        if(other.tag == "Player" & this.tag == "EnemyLaser")
         {
             Player player = other.GetComponent<Player>();
 
