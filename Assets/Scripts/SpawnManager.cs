@@ -8,6 +8,9 @@ public class SpawnManager : MonoBehaviour
     private GameObject _enemyPrefab = null;
 
     [SerializeField]
+    private GameObject _enemy2Prefab = null;
+
+    [SerializeField]
     private GameObject _enemyContainer = null;
 
     [SerializeField]
@@ -42,7 +45,7 @@ public class SpawnManager : MonoBehaviour
 
     public void InitializeSpawning()
     {
-        Debug.Log("started spawning");
+        //Debug.Log("started spawning");
         _spawning = true;
         StartCoroutine(SpawnEnemyRoutine());
         StartCoroutine(SpawnPowerupRoutine());
@@ -59,7 +62,7 @@ public class SpawnManager : MonoBehaviour
         while (_spawning)
         {
             Vector3 posToSpawn = new Vector3(Random.Range(-8f, 8f), 7, 0);
-            GameObject newEnemy = Instantiate(_enemyPrefab, posToSpawn, Quaternion.identity);
+            GameObject newEnemy = Instantiate(_enemy2Prefab, posToSpawn, Quaternion.identity);
 
             //update enemy count in wave manager
             _waveManager.enemyCount++;

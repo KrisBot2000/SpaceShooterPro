@@ -46,7 +46,7 @@ public class WaveManager : MonoBehaviour
 
             //increment wave
             wave++;
-            Debug.Log("Wave: " + wave);
+            //Debug.Log("Wave: " + wave);
 
             //display wave# for x amount of time
             _uIManager.PlayWaveDisplay(wave);
@@ -62,7 +62,7 @@ public class WaveManager : MonoBehaviour
 
     public void InitializeWaveSequence()
     {
-        Debug.Log("wave sequence initialized");
+        //Debug.Log("wave sequence initialized");
         
         wave = 1;
         enemyCount = 0;

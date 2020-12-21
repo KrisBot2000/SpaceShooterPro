@@ -132,7 +132,7 @@ public class UIManager : MonoBehaviour
 
     public void PlayWaveDisplay(int wave)
     {
-        Debug.Log(wave.ToString());
+        //Debug.Log(wave.ToString());
         _waveDisplayText.gameObject.SetActive(true);
         //int waveString = wave.ToString();
         StartCoroutine(WaveDisplayRoutine(wave));
@@ -141,7 +141,15 @@ public class UIManager : MonoBehaviour
     IEnumerator WaveDisplayRoutine(int wave)
     {
         _waveDisplayText.text = "WAVE " + wave;
-        yield return new WaitForSeconds(3.0f);
+        yield return new WaitForSeconds(0.4f);
+        _waveDisplayText.text = "";
+        yield return new WaitForSeconds(0.4f);
+        _waveDisplayText.text = "WAVE " + wave;
+        yield return new WaitForSeconds(0.4f);
+        _waveDisplayText.text = "READY";
+        yield return new WaitForSeconds(0.4f);
+        _waveDisplayText.text = "GO!";
+        yield return new WaitForSeconds(0.4f);
         _waveDisplayText.gameObject.SetActive(false);
     }
 
